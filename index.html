@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Water Rush - charity: water Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Start Screen -->
+    <div id="startScreen" class="screen">
+        <div class="start-container">
+            <!-- Logo Area -->
+            <div class="logo-area">
+                <div class="logo-circle">
+                    <svg class="droplet-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0L12 2.69z" fill="#1F4E79"/>
+                    </svg>
+                </div>
+                <h1 class="game-title">Clean Water Rush</h1>
+                <p class="game-subtitle">A charity: water game</p>
+            </div>
+
+            <!-- Game Card -->
+            <div class="game-card">
+                <div class="card-content">
+                    <h2 class="card-title">Help Fund Clean Water!</h2>
+                    <p class="card-text">
+                        Collect <span class="text-blue">clean water drops</span> and 
+                        <span class="text-yellow">bonus jerry cans</span>.
+                    </p>
+                    <p class="card-text">
+                        Avoid <span class="text-dark">polluted drops</span> or lose lives!
+                    </p>
+                </div>
+
+                <!-- Instructions -->
+                <div class="instructions-box">
+                    <div class="instruction-item">
+                        <div class="instruction-icon clean-icon">
+                            <svg class="droplet-small" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.32 0L12 2.69z" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="instruction-text">
+                            <span class="instruction-label">Clean Drop:</span> +10 points
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon bonus-icon">🚰</div>
+                        <div class="instruction-text">
+                            <span class="instruction-label">Jerry Can:</span> +25 points
+                        </div>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon polluted-icon">☠️</div>
+                        <div class="instruction-text">
+                            <span class="instruction-label">Polluted:</span> -15 points & lose a life
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goal -->
+                <div class="goal-box">
+                    <p class="goal-text">🎯 Goal: Reach 100 points in 30 seconds!</p>
+                </div>
+
+                <!-- Start Button -->
+                <button id="startBtn" class="btn-primary">Start Game</button>
+
+                <!-- How to Play Link -->
+                <div class="info-link">
+                    <button id="howToBtn" class="link-button">How to Play</button>
+                </div>
+
+                <!-- Info Link -->
+                <div class="info-link">
+                    <a href="https://www.charitywater.org" target="_blank" rel="noopener noreferrer" class="link-text">
+                        Learn more about charity: water →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <p class="footer-text">Created to raise awareness for clean water access</p>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen hidden">
+        <!-- Header -->
+        <div class="game-header">
+            <div class="header-content">
+                <h1 class="header-title">Clean Water Rush</h1>
+                
+                <!-- HUD -->
+                <div class="hud">
+                    <div class="hud-item">
+                        <div class="hud-label">Score: <span id="scoreValue">0</span></div>
+                    </div>
+                    <div class="hud-item progress-container">
+                        <div class="progress-label">Well Funding</div>
+                        <div id="progressTrack" class="progress-track">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                    <div class="hud-item">
+                        <div class="hud-label">Time: <span id="timeValue">30</span>s</div>
+                    </div>
+                </div>
+
+                <!-- Lives -->
+                <div class="lives-container">
+                    <div class="heart heart-1">❤️</div>
+                    <div class="heart heart-2">❤️</div>
+                    <div class="heart heart-3">❤️</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameArea" class="game-area">
+            <!-- Clouds decoration -->
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+
+            <!-- Instructions overlay -->
+            <div class="game-instructions">
+                <p class="instructions-text">Tap blue drops! Avoid polluted ones!</p>
+            </div>
+
+            <!-- Falling items will be dynamically added here -->
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="game-controls">
+            <button id="pauseBtn" class="btn-control">Pause</button>
+            <button id="restartBtn" class="btn-control">Restart</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-body">
+                <!-- Icon -->
+                <div id="modalIcon" class="modal-icon">
+                    <span class="icon-emoji">⏰</span>
+                </div>
+
+                <!-- Title -->
+                <h2 id="modalTitle" class="modal-title">Time's Up!</h2>
+
+                <!-- Score -->
+                <div class="score-box">
+                    <p class="score-label">Final Score</p>
+                    <p id="finalScore" class="score-value">0</p>
+                    <div class="score-divider"></div>
+                    <p id="scoreMessage" class="score-message">You collected 0 clean drops!</p>
+                </div>
+
+                <!-- Impact Message -->
+                <div class="impact-box">
+                    <p id="impactMessage" class="impact-text">
+                        <strong>Great effort!</strong> Every drop counts toward clean water access.
+                    </p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="modal-buttons">
+                    <button id="playAgainBtn" class="btn-primary">Play Again</button>
+                    <button id="exitBtn" class="btn-secondary">Exit to Menu</button>
+                </div>
+
+                <!-- Charity Water Link -->
+                <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer" class="charity-link">
+                    Make a real impact at charity: water →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
