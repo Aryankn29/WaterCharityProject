@@ -23,7 +23,7 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     overflow: hidden;
     height: 100vh;
     width: 100vw;
@@ -199,6 +199,29 @@ body {
 }
 
 .goal-text {
+    color: var(--deep-blue);
+    font-weight: 600;
+}
+
+.difficulty-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.difficulty-label {
+    font-size: 0.9rem;
+    color: var(--deep-blue);
+    font-weight: 600;
+}
+
+.difficulty-select {
+    padding: 0.4rem 0.75rem;
+    border-radius: 9999px;
+    border: 2px solid var(--deep-blue);
+    background: var(--white);
     color: var(--deep-blue);
     font-weight: 600;
 }
@@ -527,6 +550,31 @@ body {
     transform: scale(0.95);
 }
 
+.cw-footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border-top: 1px solid var(--gray-200);
+    font-size: 0.9rem;
+}
+
+.cw-footer a {
+    color: var(--deep-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cw-footer a:hover {
+    text-decoration: underline;
+}
+
+.cw-footer .sep {
+    color: var(--gray-600);
+}
+
 /* Game Over Modal */
 .modal {
     position: fixed;
@@ -722,4 +770,26 @@ body {
     .header-content {
         padding: 1rem 2rem;
     }
+}
+
+/* Toast (milestones) */
+.toast {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: var(--white);
+    color: var(--deep-blue);
+    border: 2px solid var(--yellow-accent);
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    opacity: 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    z-index: 100;
+    font-weight: 700;
+}
+.toast.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }

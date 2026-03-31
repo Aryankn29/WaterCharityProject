@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clean Water Rush - charity: water Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -63,6 +66,16 @@
                 <!-- Goal -->
                 <div class="goal-box">
                     <p class="goal-text">🎯 Goal: Reach 100 points in 30 seconds!</p>
+                </div>
+
+                <!-- Difficulty -->
+                <div class="difficulty-box">
+                    <label for="difficultySelect" class="difficulty-label">Difficulty:</label>
+                    <select id="difficultySelect" class="difficulty-select">
+                        <option value="easy">Easy</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="hard">Hard</option>
+                    </select>
                 </div>
 
                 <!-- Start Button -->
@@ -138,6 +151,13 @@
             <button id="pauseBtn" class="btn-control">Pause</button>
             <button id="restartBtn" class="btn-control">Restart</button>
         </div>
+
+        <!-- Footer Links -->
+        <footer class="cw-footer">
+            <a href="https://www.charitywater.org" target="_blank" rel="noopener noreferrer">charity: water website</a>
+            <span class="sep">•</span>
+            <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">Donate</a>
+        </footer>
     </div>
 
     <!-- Game Over Modal -->

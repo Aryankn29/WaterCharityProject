@@ -4,6 +4,11 @@ let gameState = {
     timeLeft: 30,
     lives: 3,
     goalPoints: 100,
+    difficulty: 'normal',
+    fallSpeedMin: 0.3,
+    fallSpeedMax: 0.6,
+    spawnMinMs: 1000,
+    spawnMaxMs: 1500,
     isRunning: false,
     isPaused: false,
     spawnIntervalId: null,
@@ -20,6 +25,7 @@ const gameScreen = document.getElementById('gameScreen');
 const gameOverModal = document.getElementById('gameOverModal');
 const startBtn = document.getElementById('startBtn');
 const howToBtn = document.getElementById('howToBtn');
+const difficultySelect = document.getElementById('difficultySelect');
 const pauseBtn = document.getElementById('pauseBtn');
 const restartBtn = document.getElementById('restartBtn');
 const playAgainBtn = document.getElementById('playAgainBtn');
@@ -43,6 +49,12 @@ function init() {
             alert('How to Play:\n\n• Tap blue water drops to collect them (+10 points)\n• Tap yellow jerry cans for bonus points (+25 points)\n• Avoid polluted drops (☠️) or you\'ll lose points and lives\n• Reach 100 points in 30 seconds to win!\n• You have 3 lives - miss clean drops or hit polluted ones to lose them');
         });
     }
+    if (difficultySelect) {
+        difficultySelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            gameState.difficulty = val;
+        });
+    }
     pauseBtn.addEventListener('click', togglePause);
     restartBtn.addEventListener('click', restartGame);
     playAgainBtn.addEventListener('click', playAgain);
@@ -58,6 +70,9 @@ function startGame() {
 
     // Reset state
     resetGameState();
+
+    // Apply difficulty
+    applyDifficulty();
 
     // Start game loop
     gameState.isRunning = true;
@@ -121,7 +136,7 @@ function startSpawner() {
         if (!gameState.isPaused && gameState.isRunning) {
             spawnItem();
         }
-    }, 1000 + Math.random() * 500); // 1000-1500ms (slower spawn)
+    }, gameState.spawnMinMs + Math.random() * (gameState.spawnMaxMs - gameState.spawnMinMs));
 }
 
 // Spawn Item
@@ -142,7 +157,7 @@ function spawnItem() {
         type: type,
         x: Math.random() * 85, // 0-85% to keep within bounds
         y: -5,
-        speed: 0.3 + Math.random() * 0.3, // Random speed between 0.3-0.6 (much slower)
+        speed: gameState.fallSpeedMin + Math.random() * (gameState.fallSpeedMax - gameState.fallSpeedMin),
         element: null
     };
 
@@ -207,11 +222,14 @@ function handleItemClick(item) {
     // Handle scoring based on type
     if (item.type === 'clean') {
         gameState.score += 10;
+        playBeep(660, 90, 'sine', 0.06);
     } else if (item.type === 'bonus') {
         gameState.score += 25;
+        playBeep(880, 120, 'triangle', 0.07);
     } else if (item.type === 'polluted') {
         gameState.score = Math.max(0, gameState.score - 15);
         gameState.lives = Math.max(0, gameState.lives - 1);
+        playBeep(200, 120, 'square', 0.06);
         updateLives();
 
         if (gameState.lives === 0) {
@@ -289,6 +307,9 @@ function updateHUD() {
     // Update progress bar
     const progress = Math.min(100, (gameState.score / gameState.goalPoints) * 100);
     progressFill.style.width = `${progress}%`;
+
+    // Milestones
+    checkMilestones();
 }
 
 // Update Lives
@@ -365,6 +386,7 @@ function endGame() {
         modalIcon.querySelector('.icon-emoji').textContent = '🎉';
         impactMessage.innerHTML = '<strong>Amazing!</strong> In real life, clean water changes everything.';
         scoreMessage.textContent = 'You helped fund clean water awareness! 💧';
+        playBeep(880, 120, 'sine', 0.08); setTimeout(()=>playBeep(990, 120,'sine',0.08),120);
     } else {
         modalTitle.textContent = "Time's Up!";
         modalIcon.classList.remove('win');
@@ -372,6 +394,7 @@ function endGame() {
         impactMessage.innerHTML = '<strong>Great effort!</strong> Every drop counts toward clean water access.';
         const dropsCollected = Math.floor(gameState.score / 10);
         scoreMessage.textContent = `You collected ${dropsCollected} clean drops!`;
+        playBeep(220, 200, 'sawtooth', 0.05);
     }
 }
 
@@ -392,3 +415,82 @@ function exitToMenu() {
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
+
+// Difficulty settings
+function applyDifficulty() {
+    const diff = gameState.difficulty;
+    if (diff === 'easy') {
+        gameState.goalPoints = 80;
+        gameState.timeLeft = 35;
+        gameState.fallSpeedMin = 0.25;
+        gameState.fallSpeedMax = 0.45;
+        gameState.spawnMinMs = 1100;
+        gameState.spawnMaxMs = 1600;
+    } else if (diff === 'hard') {
+        gameState.goalPoints = 130;
+        gameState.timeLeft = 25;
+        gameState.fallSpeedMin = 0.5;
+        gameState.fallSpeedMax = 0.9;
+        gameState.spawnMinMs = 700;
+        gameState.spawnMaxMs = 1100;
+    } else {
+        // normal
+        gameState.goalPoints = 100;
+        gameState.timeLeft = 30;
+        gameState.fallSpeedMin = 0.3;
+        gameState.fallSpeedMax = 0.6;
+        gameState.spawnMinMs = 1000;
+        gameState.spawnMaxMs = 1500;
+    }
+    updateHUD();
+}
+
+// Milestones
+const milestones = [
+    { score: 25, message: 'Nice start! Keep going.' },
+    { score: 50, message: 'Halfway there!' },
+    { score: 100, message: 'Goal reached!' }
+];
+let shownMilestones = new Set();
+
+function checkMilestones() {
+    milestones.forEach(m => {
+        if (gameState.score >= m.score && !shownMilestones.has(m.score)) {
+            shownMilestones.add(m.score);
+            showToast(m.message);
+        }
+    });
+}
+
+function showToast(text) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = text;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => {
+        el.classList.add('visible');
+    });
+    setTimeout(() => {
+        el.classList.remove('visible');
+        setTimeout(() => el.remove(), 300);
+    }, 1800);
+}
+
+// Sounds (Web Audio API, simple beeps)
+let audioCtx;
+function playBeep(freq = 440, duration = 120, type = 'sine', volume = 0.05) {
+    try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.value = volume;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        osc.start(now);
+        osc.stop(now + duration / 1000);
+    } catch (_) {}
+}
+
